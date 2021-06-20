@@ -1,7 +1,7 @@
-<template>
-  <div>
-    <Nuxt />
-  </div>
+<template lang="pug">
+  div
+    Header
+    Nuxt
 </template>
 
 <style>

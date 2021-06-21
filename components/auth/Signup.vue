@@ -43,9 +43,10 @@ export default {
       if (this.name && this.email && this.password) {
         auth.createUserWithEmailAndPassword(this.email, this.password).then((res) => {
           db.collection("users").add({ uid: res.user.uid, name: this.name, email: this.email, password: this.password }).then(docRef => {
-              localStorage.setItem("uid", `${docRef.uid}`);
-              self.$router.push("/home");
-            }).catch(error => { console.error("Error adding document: ", error) });
+            self.$store.dispatch("auth/gotUser", { id: docRef.id, uid: res.user.uid, name: this.name, email: this.email });
+            localStorage.setItem("uid", `${docRef.uid}`);
+            self.$router.push("/home");
+          }).catch(error => { console.error("Error adding document: ", error) });
         })
         .catch((error) => { this.error = ((code) => {
           switch (code) {

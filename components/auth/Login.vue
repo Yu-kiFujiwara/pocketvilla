@@ -35,6 +35,8 @@ export default {
         this.error = "入力を確認してください";
       } else {
         auth.signInWithEmailAndPassword(this.email, this.password).then((user) => {
+          // TODO: ↓ userを取得し、email, name, idもstoreで保持する
+          self.$store.dispatch("auth/gotUser", { uid: user.uid });
           // ローカルストレージにuidを保持
           localStorage.setItem("uid", `${user.uid}`);
           self.$router.push("/home");

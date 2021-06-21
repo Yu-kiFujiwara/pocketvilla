@@ -16,7 +16,8 @@
 </template>
 
 <script>
-import { auth } from "@/plugins/firebase.js";
+import { auth } from "/plugins/firebase.js";
+import { db } from "/plugins/firebase.js";
 
 export default {
   name: "login",
@@ -33,13 +34,10 @@ export default {
       if (!(this.email && this.password)) {
         this.error = "入力を確認してください";
       } else {
-        auth.signInWithEmailAndPassword(this.email, this.password).then((userCredential) => {
-          const user = axios.get(`/api/v1/users/id`, { params: { uid: userCredential.user.uid }}).then((res) => {
-            self.$store.dispatch("auth/gotUser", { id: res.data.id, uid: res.data.uid, name: res.data.name, email: this.email });
-            // ローカルストレージにuidを保持
-            localStorage.setItem("uid", `${res.data.uid}`);
-            self.$router.push("/home");
-          }).catch(error => console.log(error));
+        auth.signInWithEmailAndPassword(this.email, this.password).then((user) => {
+          // ローカルストレージにuidを保持
+          localStorage.setItem("uid", `${user.uid}`);
+          self.$router.push("/home");
         })
         .catch((error) => { this.error = ((code) => {
           switch (code) {

@@ -18,7 +18,8 @@
 </template>
 
 <script>
-import { auth } from "@/plugins/firebase.js"
+import { db } from "/plugins/firebase.js";
+import { auth } from "/plugins/firebase.js";
 import { required } from 'Vuelidate';
 
 export default {
@@ -41,13 +42,10 @@ export default {
       const self = this;
       if (this.name && this.email && this.password) {
         auth.createUserWithEmailAndPassword(this.email, this.password).then((res) => {
-          const user = { uid: res.user.uid, name: this.name, email: this.email, password: this.password };
-          axios.post("/api/v1/users", { user }).then((newUser) => { 
-            self.$store.dispatch("auth/gotUser", { id: newUser.data.id, uid: newUser.data.uid, name: this.name, email: this.email });
-            // ローカルストレージにuidを保持
-            localStorage.setItem("uid", `${newUser.data.uid}`);
-            self.$router.push("/home")
-          });
+          db.collection("users").add({ uid: res.user.uid, name: this.name, email: this.email, password: this.password }).then(docRef => {
+              localStorage.setItem("uid", `${docRef.uid}`);
+              self.$router.push("/home");
+            }).catch(error => { console.error("Error adding document: ", error) });
         })
         .catch((error) => { this.error = ((code) => {
           switch (code) {

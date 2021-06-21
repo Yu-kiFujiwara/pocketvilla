@@ -1,4 +1,4 @@
 <template lang="pug">
-  div
-    
+  div.text-center
+    span Topページです
 </template>

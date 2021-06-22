@@ -39,7 +39,13 @@ export default {
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     '@nuxtjs/dotenv',
+    '@nuxtjs/pwa',
   ],
+
+  manifest: {
+    name: "QUANON's Page",
+    lang: 'ja'
+  },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {

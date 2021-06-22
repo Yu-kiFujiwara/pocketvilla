@@ -20,15 +20,15 @@
 <script>
 import { db } from "/plugins/firebase.js";
 import { auth } from "/plugins/firebase.js";
-import { required } from 'Vuelidate';
+// import { required } from 'Vuelidate';
 
 export default {
   name: "signup",
-  validations: {
-    name: { required },
-    email: { required },
-    password: { required },
-  },
+  // validations: {
+  //   name: { required },
+  //   email: { required },
+  //   password: { required },
+  // },
   data () {
     return {
       name: "",

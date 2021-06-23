@@ -10,12 +10,16 @@
     "test": "jest"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.35",
+    "@fortawesome/free-solid-svg-icons": "^5.15.3",
+    "@fortawesome/vue-fontawesome": "^2.0.2",
     "@nuxtjs/dotenv": "^1.4.1",
     "@nuxtjs/pwa": "^3.3.5",
     "core-js": "^3.9.1",
     "firebase": "^8.6.8",
     "firebase-tools": "^9.13.1",
     "nuxt": "^2.15.3",
+    "nuxt-fontawesome": "^0.4.0",
     "save": "^2.4.0",
     "vuelidate": "^0.7.6"
   },

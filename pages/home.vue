@@ -1,14 +1,16 @@
 <template lang="pug">
   div
-    Home
+    Skyway
 </template>
 
 <script>
 import Home from "/components/Home.vue";
+import Skyway from "/components/SkywayVideo.vue";
 
 export default {
   components: {
-    Home
+    Home,
+    Skyway
   },
 }
 </script>

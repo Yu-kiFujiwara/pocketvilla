@@ -47,8 +47,8 @@ export default {
   data () {
     return {
       APIKey: process.env.SKYWAY_API_KEY,
-      selectedAudio: '',
-      selectedVideo: '',
+      selectedAudio: null,
+      selectedVideo: null,
       audios: [],
       videos: [],
       localStream: null,
@@ -65,53 +65,33 @@ export default {
       this.connect(call);
     });
     this.getDevices();
-    //デバイスへのアクセス
-    // navigator.mediaDevices.enumerateDevices()
-    // .then((deviceInfos) => {
-    //   for (let i = 0; i !== deviceInfos.length; ++i) {
-    //     const deviceInfo = deviceInfos[i]
-    //     if (deviceInfo.kind === 'audioinput') {
-    //       this.audios.push({
-    //         text: deviceInfo.label ||
-    //         `Microphone ${this.audios.length + 1}`,
-    //         value: deviceInfo.deviceId
-    //       })
-    //     } else if (deviceInfo.kind === 'videoinput') {
-    //       this.videos.push({
-    //         text: deviceInfo.label ||
-    //         `Camera  ${this.videos.length - 1}`,
-    //         value: deviceInfo.deviceId
-    //       })
-    //     }
-    //   }
-    // })
   },
   methods: {
+    //デバイスへのアクセス
     async getDevices () {
-      const defaultVideoStream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-      });
-
-      // デバイスの一覧を取得
-      const devices = await navigator.mediaDevices.enumerateDevices();
-
-      // 任意のデバイスを指定
-      const newVideoInputDevice = devices.find(
-        (device) => device.kind === "videoinput"
-      );
-      const self = this;
-      console.log(newVideoInputDevice)
-      this.localStream = await navigator.mediaDevices.getUserMedia({
-        // this.videos.push(newVideoInputDevice)
-        video: {
-          deviceId: newVideoInputDevice.deviceId,
-        },
-      });
+      navigator.mediaDevices.enumerateDevices()
+      .then((deviceInfos) => {
+        for (let i = 0; i !== deviceInfos.length; ++i) {
+          const deviceInfo = deviceInfos[i]
+          if (deviceInfo.kind === 'audioinput') {
+            this.audios.push({
+              text: deviceInfo.label ||
+              `Microphone ${this.audios.length + 1}`,
+              value: deviceInfo.deviceId
+            })
+          } else if (deviceInfo.kind === 'videoinput') {
+            this.videos.push({
+              text: deviceInfo.label ||
+              `Camera  ${this.videos.length - 1}`,
+              value: deviceInfo.deviceId
+            })
+          }
+        }
+      })
     },
     // カメラ・スピーカー設定
     onChange () {
-      console.log(this.selectedAudio);
-      if (this.selectedAudio != '' && this.selectedVideo != '') this.connectLocalCamera();
+      if (this.selectedAudio != null && this.selectedVideo != null) this.connectLocalCamera();
     },
     // 設定されたカメラ・スピーカーに接続
     async connectLocalCamera () {
@@ -122,28 +102,20 @@ export default {
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       document.getElementById('my-video').srcObject = stream;
       this.localStream = stream;
-      console.log(this.localStream)
     },
     async joinRoom () {
       this.peer = await new Peer({ key: this.APIKey, debug: 3 });
       this.peer.on("peerJoin", (peerId) => {
         const sfuRoom = this.peer.joinRoom(this.roomName, { mode: "sfu", stream: this.localStream });
+        sfuRoom ? this.enterRoom(sfuRoom) : this.createRoom(sfuRoom);
       }); 
-      // sfuRoom ? this.enterRoom() : this.createRoom();
     },
-    createRoom () {
+    createRoom (sfuRoom) {
       sfuRoom.on("open", () => {});
     },
-    enterRoom () {
+    enterRoom (room) {
       room.on("peerJoin", (peerId) => {}) 
     },
-
-  //   makeCall: function () {
-  //     console.log('makeCall');
-  //     const call = this.peer.call(this.calltoid, this.localStream);
-  //     this.connect(call);
-  //   },
-
     connect: function (call) {
       call.on('stream', stream => {
         const el = document.getElementById('their-video');

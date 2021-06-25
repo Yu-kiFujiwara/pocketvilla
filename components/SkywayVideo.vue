@@ -1,39 +1,20 @@
-<template>
-  <section class="container">
-    <div>
-      <logo/>
-      <video id="their-video" width="200" autoplay playsinline></video>
-      <video id="my-video" muted="true" width="200" autoplay playsinline></video>
-
-      <div class="main">
-        <h2>Nuxt.js + SkyWayのビデオチャット</h2>
-        マイク:
-        <select v-model="selectedAudio" @change="onChange">
-          <option disabled value="">Please select one</option>
-          <option v-for="(audio, key, index) in audios" v-bind:key="index" :value="audio.value">
-            {{ audio.text }}
-          </option>
-        </select>
-
-        カメラ: 
-        <select v-model="selectedVideo" @change="onChange">
-          <option disabled value="">Please select one</option>
-          <option v-for="(video, key, index) in videos" v-bind:key="index" :value="video.value">
-            {{ video.text }}
-          </option>
-        </select>
-
-        <div>
-          <p>Your id: <span id="my-id">{{peerId}}</span></p>
-          <p>他のブラウザでこのIDをコールしましょう。</p>
-          <h3>コールする</h3>
-          <input v-model="roomName">
-          <button @click="joinRoom" class="button--green">Enter</button>
-        </div>
-      </div>
-
-    </div>
-  </section>
+<template lang="pug">
+  .container
+    div.w-screen.text-center.content-start.justify-center.justify-between
+      video#my-video.float-left(muted="true" width="500px" height="300px" autoplay playsinline)
+      video#their-video(width="500px" height="300px" autoplay playsinline)
+    .container.main.w-screen.text-center
+      span マイク:
+      select(class="focus:outline-none focus:shadow-outline" v-model="selectedAudio" @change="onChange")
+        option(disabled value="") Please select one
+        option(v-for="(audio, key, index) in audios" v-bind:key="index" :value="audio.value") {{ audio.text }}
+      span カメラ: 
+      select(v-model="selectedVideo" @change="onChange")
+        option(disabled value="") Please select one
+        option(v-for="(video, key, index) in videos" v-bind:key="index" :value="video.value") {{ video.text }}
+      div
+        input(v-model="roomName")
+        button.button-success(@click="joinRoom") Enter
 </template>
 
 <script>

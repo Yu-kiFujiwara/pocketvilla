@@ -1,17 +1,19 @@
 <template lang="pug">
-  .container
+  div
     div.w-screen.text-center.content-start.justify-center.justify-between
       video#my-video.float-left(muted="true" width="500px" height="300px" autoplay playsinline)
       video#their-video(width="500px" height="300px" autoplay playsinline)
-    .container.main.w-screen.text-center
-      span マイク:
-      select(class="focus:outline-none focus:shadow-outline" v-model="selectedAudio" @change="onChange")
-        option(disabled value="") Please select one
-        option(v-for="(audio, key, index) in audios" v-bind:key="index" :value="audio.value") {{ audio.text }}
-      span カメラ: 
-      select(v-model="selectedVideo" @change="onChange")
-        option(disabled value="") Please select one
-        option(v-for="(video, key, index) in videos" v-bind:key="index" :value="video.value") {{ video.text }}
+    .main.w-screen.text-center
+      .audio
+        span マイク:
+        select(class="focus:outline-none focus:shadow-outline" v-model="selectedAudio" @change="onChange")
+          option(disabled value="") Please select one
+          option(v-for="(audio, key, index) in audios" v-bind:key="index" :value="audio.value") {{ audio.text }}
+      .camera
+        span カメラ: 
+        select(v-model="selectedVideo" @change="onChange")
+          option(disabled value="") Please select one
+          option(v-for="(video, key, index) in videos" v-bind:key="index" :value="video.value") {{ video.text }}
       div
         input(v-model="roomName")
         button.button-success(@click="joinRoom") Enter
@@ -50,6 +52,10 @@ export default {
   methods: {
     //デバイスへのアクセス
     async getDevices () {
+      const permit = await navigator.mediaDevices.getUserMedia({ audio: true, video: true })
+      .catch(err => { alert("カメラ・マイクの使用が許可されていません。設定を確認してください。"); });
+      if (!permit) return;
+
       navigator.mediaDevices.enumerateDevices()
       .then((deviceInfos) => {
         for (let i = 0; i !== deviceInfos.length; ++i) {
@@ -80,9 +86,11 @@ export default {
         audio: this.selectedAudio ? { deviceId: { exact: this.selectedAudio } } : false,
         video: this.selectedVideo ? { deviceId: { exact: this.selectedVideo } } : false
       }
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
-      document.getElementById('my-video').srcObject = stream;
-      this.localStream = stream;
+      navigator.mediaDevices.getUserMedia(constraints)
+      .then(stream => {
+        document.getElementById('my-video').srcObject = stream;
+        this.localStream = stream;
+      })
     },
     async joinRoom () {
       this.peer = await new Peer({ key: this.APIKey, debug: 3 });

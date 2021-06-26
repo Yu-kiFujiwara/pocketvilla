@@ -23,6 +23,8 @@
 <script>
 import Logo from '~/components/Logo.vue'
 import Peer from 'skyway-js';
+const EventEmitter = require('events');
+const myEmitter = new EventEmitter();
 
 export default {
   components: {
@@ -41,7 +43,6 @@ export default {
       roomName: ''
     }
   },
-
   mounted () {
     this.peer = new Peer({ key: this.APIKey, debug: 3 });
     this.peer.on('call', call => {
@@ -94,17 +95,16 @@ export default {
       })
     },
     async joinRoom () {
-      this.peer = await new Peer({ key: this.APIKey, debug: 3 });
-      this.peer.on("peerJoin", (peerId) => {
-        const sfuRoom = this.peer.joinRoom(this.roomName, { mode: "sfu", stream: this.localStream });
-        sfuRoom ? this.enterRoom(sfuRoom) : this.createRoom(sfuRoom);
-      }); 
+      const sfuRoom = await this.peer.joinRoom(this.roomName, { mode: "sfu", stream: this.localStream });
+      sfuRoom.members.push(sfuRoom.peerId);
+      console.log(sfuRoom.members);
+      this.enterRoom(sfuRoom);
     },
     createRoom (sfuRoom) {
       sfuRoom.on("open", () => {});
     },
     enterRoom (room) {
-      room.on("peerJoin", (peerId) => {}) 
+      room.on("peerJoin", (peerId) => {});
     },
     connect: function (call) {
       call.on('stream', stream => {

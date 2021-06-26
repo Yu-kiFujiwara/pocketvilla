@@ -4,17 +4,17 @@
       video#my-video.float-left(muted="true" width="500px" height="300px" autoplay playsinline)
       video#their-video(width="500px" height="300px" autoplay playsinline)
     .main.w-screen.text-center
-      .audio
+      .audio.mb-4
         span マイク:
         select(class="focus:outline-none focus:shadow-outline" v-model="selectedAudio" @change="onChange")
           option(disabled value="") Please select one
           option(v-for="(audio, key, index) in audios" v-bind:key="index" :value="audio.value") {{ audio.text }}
-      .camera
+      .camera.mb-4
         span カメラ: 
         select(v-model="selectedVideo" @change="onChange")
           option(disabled value="") Please select one
           option(v-for="(video, key, index) in videos" v-bind:key="index" :value="video.value") {{ video.text }}
-      div
+      div.mb-12
         input(v-model="roomName")
         button.button-success(@click="joinRoom") Enter
 </template>

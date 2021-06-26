@@ -3,9 +3,9 @@
     .container.h-screen.flex.justify-center.items-center
       .row.w-full.text-center
         .mb-5
-          input.border-b(class="w-2/5 shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" v-model="email" :counter="40" type="text" placeholder="email")
+          input.border-b(class="w-3/4 lg:w-2/5 xl:w-2/5 shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" v-model="email" :counter="40" type="text" placeholder="email")
         .mb-5
-          input.border-b(class="w-2/5 shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" v-model="password" type="password" placeholder="password" autocomplete="on")
+          input.border-b(class="w-3/4 lg:w-2/5 xl:w-2/5 shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" v-model="password" type="password" placeholder="password" autocomplete="on")
         .mb-5
           button.mr-4(class="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded" @click="login") Log In
         .error

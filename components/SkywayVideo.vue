@@ -5,18 +5,19 @@
       video#their-video(width="500px" height="300px" autoplay playsinline)
     .main.w-screen.text-center
       .audio.mb-4
-        span マイク:
-        select(class="focus:outline-none focus:shadow-outline" v-model="selectedAudio" @change="onChange")
+        span.mr-5 &emsp;マイク:
+        select.shadow.border.rounded.py-2.px-3.text-gray-700(class="w-3/5 sm:w-1/3 md:w-1/4 lg:w-1/5 xl:w-1/8" v-model="selectedAudio" @change="onChange")
           option(disabled value="") Please select one
           option(v-for="(audio, key, index) in audios" v-bind:key="index" :value="audio.value") {{ audio.text }}
       .camera.mb-4
-        span カメラ: 
-        select(v-model="selectedVideo" @change="onChange")
+        span.mr-5 &emsp;カメラ:
+        select.shadow.border.rounded.py-2.px-3.text-gray-700(class="w-3/5 sm:w-1/3 md:w-1/4 lg:w-1/5 xl:w-1/8" v-model="selectedVideo" @change="onChange")
           option(disabled value="") Please select one
           option(v-for="(video, key, index) in videos" v-bind:key="index" :value="video.value") {{ video.text }}
-      div.mb-12
-        input(v-model="roomName")
-        button.button-success(@click="joinRoom") Enter
+      div.mb-4
+        label.mr-4 ルーム名：
+        input.shadow.appearance-none.border.rounded.py-2.px-3.text-gray-700.leading-tight(class="w-3/5 md:w-1/4 lg:w-1/5 xl:w-1/8 focus:outline-none focus:shadow-outline" v-model="roomName")
+      button.mb-12.bg-green-500.text-white.font-bold.py-2.px-4.border-b-4.border-green-700.rounded(class="hover:border-green-500 hover:bg-green-400" @click="joinRoom") Enter
 </template>
 
 <script>

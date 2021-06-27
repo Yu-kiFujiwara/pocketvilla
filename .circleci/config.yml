@@ -21,7 +21,7 @@ jobs:
             - ~/.cache/yarn
 
       - run:
-          name: Run tests
+          name: Run test suite
           command: yarn test
 
   deploy-to-heroku:

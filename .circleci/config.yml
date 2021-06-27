@@ -1,40 +1,46 @@
-version: 2.1
-orbs:
-   heroku: circleci/heroku@1.0.0
+version: 2
+
 jobs:
-run-test-suite:
-docker:
-- image: circleci/node:10.20.0
-working_directory: ~/project
-steps:
-- checkout
-- run:
-name: Fetch dependencies
-command: yarn install --no-progress --non-interactive --silent --pure-lockfile
-- run:
-name: Run test suite
-command: yarn test_ci
-- persist_to_workspace:
-root: ~/project
-paths:
-- .
+  ci:
+    docker:
+      - image: cimg/node:lts
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+            - yarn-v1-{{ checksum "yarn.lock" }}
+
+      - run:
+          name: Install dependencies
+          command: yarn --frozen-lockfile --cache-folder ~/.cache/yarn
+
+      - save_cache:
+          key: yarn-v1-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+
+      - run:
+          name: Run tests
+          command: yarn test
+
   deploy-to-heroku:
-   docker:
-    - image: circleci/node:10.20.0
-   working_directory: ~/project
-   steps:
-     - attach_workspace:
-        at: ~/project
-    - heroku/deploy-via-git
+    docker:
+      - image: circleci/node:10.20.0
+    working_directory: ~/project
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - heroku/deploy-via-git
 workflows:
-test-and-deploy:
-jobs:
-- run-test-suite
-   - deploy-to-heroku:
-       requires:
-         - run-test-suite
-       filters:
-         branches:
-          only:
-            - main 
-            - master
+  test-and-deploy:
+    jobs:
+      - run-test-suite
+      - deploy-to-heroku:
+          requires:
+            - run-test-suite
+          filters:
+            branches:
+              only:
+                - main
+                - master

@@ -1,4 +1,4 @@
-version: 2.1
+version: 2
 
 jobs:
   ci:
@@ -20,25 +20,16 @@ jobs:
           paths:
             - ~/.cache/yarn
 
+
       - run:
-          name: Run test suite
+          name: Run tests
           command: yarn test
 
-  deploy-to-heroku:
-    docker:
-      - image: circleci/node:10.20.0
-    working_directory: ~/project
-    steps:
-      - attach_workspace:
-          at: ~/project
-      - heroku/deploy-via-git
 workflows:
-  test-and-deploy:
+  version: 2
+  ci:
     jobs:
-      - run-test-suite
-      - deploy-to-heroku:
-          requires:
-            - run-test-suite
+      - ci:
           filters:
             branches:
               only:

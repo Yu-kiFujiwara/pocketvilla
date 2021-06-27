@@ -14,15 +14,18 @@
         select.shadow.border.rounded.py-2.px-3.text-gray-700(class="w-3/5 sm:w-1/3 md:w-1/4 lg:w-1/5 xl:w-1/8" v-model="selectedVideo" @change="onChange")
           option(disabled value="") Please select one
           option(v-for="(video, key, index) in videos" v-bind:key="index" :value="video.value") {{ video.text }}
-      div.mb-4
+      div.mb-4(v-if="!isConnected")
         label.mr-4 ルーム名：
         input.shadow.appearance-none.border.rounded.py-2.px-3.text-gray-700.leading-tight(class="w-3/5 md:w-1/4 lg:w-1/5 xl:w-1/8 focus:outline-none focus:shadow-outline" v-model="roomName")
-      button.mb-12.bg-green-500.text-white.font-bold.py-2.px-4.border-b-4.border-green-700.rounded(class="hover:border-green-500 hover:bg-green-400" @click="joinRoom") Enter
+        p.ml-12.text-red-500(v-if="$v.roomName.$error") ルーム名を入力してください。
+      button.mb-12.bg-red-500.text-white.font-bold.py-2.px-4.border-b-4.border-red-700.rounded(class="hover:border-red-500 hover:bg-red-400" v-if="isConnected" @click="exitRoom") Exit
+      button.mb-12.bg-green-500.text-white.font-bold.py-2.px-4.border-b-4.border-green-700.rounded(class="hover:border-green-500 hover:bg-green-400" v-else="!isConnected" @click="joinRoom") Enter
 </template>
 
 <script>
 import Logo from '~/components/Logo.vue'
 import Peer from 'skyway-js';
+const { required } = require('vuelidate/lib/validators');
 const EventEmitter = require('events');
 const myEmitter = new EventEmitter();
 
@@ -40,8 +43,13 @@ export default {
       localStream: null,
       peer: null,
       peerId: '',
-      roomName: ''
+      roomName: '',
+      room: null,
+      isConnected: false,
     }
+  },
+  validations: {
+    roomName: { required }
   },
   mounted () {
     this.peer = new Peer({ key: this.APIKey, debug: 3 });
@@ -95,10 +103,17 @@ export default {
       })
     },
     async joinRoom () {
+      // validation
+      this.$v.$touch()
+      console.log(this.$v)
+      if (this.$v.$invalid) return
+
       const sfuRoom = await this.peer.joinRoom(this.roomName, { mode: "sfu", stream: this.localStream });
-      sfuRoom.members.push(sfuRoom.peerId);
-      console.log(sfuRoom.members);
-      this.enterRoom(sfuRoom);
+      this.room = sfuRoom;
+      sfuRoom.on("open", () => {
+        this.isConnected = true;
+      });
+      console.log(sfuRoom);
     },
     createRoom (sfuRoom) {
       sfuRoom.on("open", () => {});
@@ -112,6 +127,10 @@ export default {
         el.srcObject = stream;
         el.play();
       });
+    },
+    exitRoom () {
+      this.peer.destroy();
+      this.isConnected = false;
     }
   }
 }

@@ -4,10 +4,13 @@
       .row.w-full.text-center
         .mb-5
           input.border-b(class="w-3/4 lg:w-2/5 xl:w-2/5 shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" v-model="name" :counter="40" type="text" placeholder="name")
+          p.ml-12.text-red-500(v-if="$v.name.$error") ※ 名前を入力してください。
         .mb-5
           input.border-b(class="w-3/4 lg:w-2/5 xl:w-2/5 shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" v-model="email" :counter="40" type="email" placeholder="email")
+          p.ml-12.text-red-500(v-if="$v.email.$error") ※ メールアドレスを入力してください。
         .mb-5
           input.border-b(class="w-3/4 lg:w-2/5 xl:w-2/5 shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" v-model="password" type="password" placeholder="password" autocomplete="on")
+          p.ml-12.text-red-500(v-if="$v.password.$error") ※ パスワードを入力してください。
         .mb-5
           p.errors.text-red-500(v-if="error") {{ error }}
         .error
@@ -20,15 +23,10 @@
 <script>
 import { db } from "/plugins/firebase.js";
 import { auth } from "/plugins/firebase.js";
-// import { required } from 'Vuelidate';
+const { required } = require('vuelidate/lib/validators');
 
 export default {
   name: "signup",
-  // validations: {
-  //   name: { required },
-  //   email: { required },
-  //   password: { required },
-  // },
   data () {
     return {
       name: "",
@@ -37,8 +35,17 @@ export default {
       error: "",
     }
   },
+  validations: {
+    name: { required },
+    email: { required },
+    password: { required },
+  },
   methods: {
     async createUser () {
+      // validation
+      this.$v.$touch();
+      if (this.$v.$invalid) return;
+
       const self = this;
       if (this.name && this.email && this.password) {
         auth.createUserWithEmailAndPassword(this.email, this.password).then((res) => {
@@ -50,7 +57,7 @@ export default {
         })
         .catch((error) => { this.error = ((code) => {
           switch (code) {
-            case "auth/email-already-in-use":　return "既にそのメールアドレスは使われています";
+            case "auth/email-already-in-use":　return "※既にそのメールアドレスは使われています";
             case "auth/wrong-password":　return "※パスワードが正しくありません";
             case "auth/weak-password":　return "※パスワードは最低6文字以上にしてください";
             default:　return "※メールアドレスとパスワードをご確認ください";

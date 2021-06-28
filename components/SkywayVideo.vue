@@ -113,7 +113,9 @@ export default {
       sfuRoom.on("open", () => {
         this.isConnected = true;
       });
-      console.log(sfuRoom);
+      sfuRoom.on("stream", (stream) => {
+        document.getElementById('their-video').srcObject = stream;
+      });
     },
     createRoom (sfuRoom) {
       sfuRoom.on("open", () => {});

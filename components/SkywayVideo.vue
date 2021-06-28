@@ -117,19 +117,6 @@ export default {
         document.getElementById('their-video').srcObject = stream;
       });
     },
-    createRoom (sfuRoom) {
-      sfuRoom.on("open", () => {});
-    },
-    enterRoom (room) {
-      room.on("peerJoin", (peerId) => {});
-    },
-    connect: function (call) {
-      call.on('stream', stream => {
-        const el = document.getElementById('their-video');
-        el.srcObject = stream;
-        el.play();
-      });
-    },
     exitRoom () {
       this.peer.destroy();
       this.isConnected = false;
